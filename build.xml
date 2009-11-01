@@ -1,0 +1,59 @@
+<project name="azmail" basedir="." default="build">
+
+	<property file="plugin.properties" />
+	
+	<path id="classpath">
+        <pathelement path="lib/Azureus2.jar"/>
+        <pathelement path="lib/swt.jar"/>
+		<pathelement path="lib/activation.jar"/>
+		<pathelement path="lib/mail.jar"/>
+        <pathelement path="${java.class.path}/"/>
+    </path>
+	
+	<target name="init">
+		<delete dir="build" />
+		<mkdir dir="build" />
+	</target>
+	
+	<target name="compile" depends="init" description="Compile the project">
+	    <javac srcdir="src" destdir="build">
+	    	<classpath refid="classpath"/>
+	    </javac>        
+	</target>
+	
+   <target name="jar" description="JARs the application" depends="compile">
+   		<mkdir dir="build/azplugins/azmail/messages/" />
+   		<copy file="src/azplugins/azmail/messages/messages.properties" toDir="build/azplugins/azmail/messages/" />
+	    <jar destfile="./${ant.project.name}.${plugin.version}.jar">
+            <fileset dir="build" />
+            <fileset dir="." includes="plugin.properties" defaultexcludes="yes" />
+    		<manifest>
+    	      <!-- Who is building this jar? -->
+    	      <attribute name="Built-By" value="Matt Haynes"/>
+    	      <!-- Information about the program itself -->
+    	      <attribute name="Implementation-Vendor" value="Matt Haynes"/>
+    	      <attribute name="Implementation-Title" value="AzMail"/>
+    	      <attribute name="Implementation-Version" value="${plugin.version}"/>
+    	      <!-- details -->
+    		  <attribute name="Class-Path" value="mail.jar activation.jar"/>
+    	    </manifest>
+	    </jar>
+    </target>
+	
+	<target name="build" depends="jar" description="Build and packaghe the project" />
+	
+	<target name="install_local" description="Install in your local Vuze" depends="jar">
+		<mkdir dir="/Users/matth/Library/Application Support/Vuze/plugins/azmail" />
+		<copy file="./${ant.project.name}.${plugin.version}.jar" toDir="/Users/matth/Library/Application Support/Vuze/plugins/azmail" />
+		<copy file="./lib/activation.jar" toDir="/Users/matth/Library/Application Support/Vuze/plugins/azmail" />
+		<copy file="./lib/mail.jar" toDir="/Users/matth/Library/Application Support/Vuze/plugins/azmail" />
+		<exec executable="osascript">
+			<arg line="-e 'tell application &quot;Vuze&quot; to quit'" />	
+		</exec>
+		<sleep seconds="2"/>
+		<exec executable="open">
+			<arg line="-a Vuze" />	
+		</exec>
+	</target>
+
+</project>
