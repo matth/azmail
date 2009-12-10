@@ -40,7 +40,7 @@
 	    </jar>
     </target>
 	
-	<target name="build" depends="jar" description="Build and packaghe the project" />
+	<target name="build" depends="jar" description="Build and package the project" />
 	
 	<target name="install_local" description="Install in your local Vuze" depends="jar">
 		<mkdir dir="/Users/matth/Library/Application Support/Vuze/plugins/azmail" />
